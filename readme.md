@@ -6,7 +6,7 @@ MYSQL_NAME=mysql_local
 MYSQL_PASSWORD={value}
 MYSQL_DIR={value}
 DOCKER_IP={value}
-WEB_NAME=
+WEB_NAME=web-server
 ```
 3. Login to docker:\
 `docker login`
