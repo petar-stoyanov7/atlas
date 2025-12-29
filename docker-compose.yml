@@ -4,7 +4,7 @@ services:
     build:
       context: ./web-server
       dockerfile: Dockerfile
-    container_name: web-server
+    container_name: ${WEB_NAME}
     volumes:
       - /home/antares/code:/var/www/html
       - ./web-server/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
@@ -21,7 +21,7 @@ services:
       - DOCKER_API_VERSION=1.52
   mysql:
     image: 'mysql:8.0'
-    container_name: mysql-local
+    container_name: ${MYSQL_NAME}
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
     volumes:

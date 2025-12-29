@@ -1,0 +1,65 @@
+#!/bin/bash
+red='\033[0;31m'
+green='\033[0;32m'
+yellow='\033[0;33m'
+no='\033[0m'
+
+script_dir="$(cd "$(dirname -- "$0")" && pwd)"
+cd $script_dir
+
+function echo_g() {
+  echo -e "${green}$1${no}"
+}
+function echo_y() {
+  echo -e "${yellow}$1${no}"
+}
+function echo_r() {
+  echo -e "${red}$1${no}"
+}
+
+function atlas_help() {
+  echo -e "Command syntax atlas.sh <option>"
+  echo -e "Options:"
+  echo -e "${green}init${no} - Initializes the project, creating an alias for the script"
+  echo -e "${green}start (up)${no} - Starts the containers"
+  echo -e "${red}stop (down)${no} - Stops the containers"
+}
+
+function atlas_init() {
+  echo_g "Initializing project"
+  if grep -q atlas ~/.bashrc; then
+    echo_r "Removing existing alias"
+    sed -i '/atlas/d' ~/.bashrc
+  fi
+  echo "Creating an alias for the script"
+  echo "alias atlas=$script_dir/atlas.sh" >> ~/.bashrc
+}
+
+function atlas_exec() {
+  if [ "$1" == "mysql" ]; then
+    container_name=$(grep "MYSQL_NAME" $script_dir/.env |cut -d'=' -f2)
+  elif [ "$1" == "mysql" ]; then
+    container_name=$(grep "WEB_NAME" $script_dir/.env |cut -d'=' -f2)
+  else
+    container_name=$(grep "WEB_NAME" $script_dir/.env |cut -d'=' -f2)
+  fi
+  container_id=$(docker ps |grep $container_name |cut -d' ' -f1)
+
+  if [ -n "$2" ]; then
+    docker exec -it "$container_id" "$2"
+  else
+    docker exec -it "$container_id" /bin/bash
+  fi
+}
+
+if [ "$1" == "init" ]; then
+  atlas_init
+elif [ "$1" == "up" ] || [ "$1" == "start" ]; then
+  docker-compose up -d
+elif [ "$1" == "down" ] || [ "$1" == "stop" ]; then
+  docker-compose down --remove-orphans
+elif [ "$1" == "exec" ] || [ "$1" == "x" ]; then
+  atlas_exec "$2" "$3" "$4" "$5"
+else
+  atlas_help
+fi
