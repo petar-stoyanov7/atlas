@@ -1,0 +1,30 @@
+version: '3'
+services:
+  web:
+    build:
+      context: ./web-server
+      dockerfile: Dockerfile
+    container_name: web-server
+    volumes:
+      - /home/antares/code:/var/www/html
+      - ./web-server/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      - ./web-server/apache/cert:/etc/apache2/certificate
+      - ./web-server/apache/conf:/etc/apache2/sites-enabled
+    extra_hosts:
+      - "host.docker.internal:${DOCKER_IP}"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8000:8000"
+      - "3000:3000"
+    environment:
+      - DOCKER_API_VERSION=1.52
+  mysql:
+    image: 'mysql:8.0'
+    container_name: mysql-local
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ${MYSQL_DIR}:/var/lib/mysql
+    ports:
+      - "3306:3306"
