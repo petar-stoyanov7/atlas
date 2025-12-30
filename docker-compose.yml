@@ -12,6 +12,7 @@ services:
       - ./web-server/apache/conf:/etc/apache2/sites-enabled
     extra_hosts:
       - "host.docker.internal:${DOCKER_IP}"
+    restart: on-failure
     ports:
       - "80:80"
       - "443:443"
@@ -26,5 +27,6 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - ${MYSQL_DIR}:/var/lib/mysql
+    restart: on-failure
     ports:
       - "3306:3306"

@@ -23,6 +23,7 @@ function atlas_help() {
   echo -e "${green}init${no} - Initializes the project, creating an alias for the script"
   echo -e "${green}start (up)${no} - Starts the containers"
   echo -e "${red}stop (down)${no} - Stops the containers"
+  echo -e "${yellow}exec [web|mysql]${no} - SSH to a container"
 }
 
 function atlas_init() {
@@ -33,6 +34,15 @@ function atlas_init() {
   fi
   echo "Creating an alias for the script"
   echo "alias atlas=$script_dir/atlas.sh" >> ~/.bashrc
+}
+
+function atlas_start() {
+  echo_g "Starting project"
+  if [ "$1" == "debug" ] || [ "$1" == "-v" ]; then
+    docker-compose up
+  else
+    docker-compose up -d
+  fi
 }
 
 function atlas_exec() {
@@ -55,7 +65,7 @@ function atlas_exec() {
 if [ "$1" == "init" ]; then
   atlas_init
 elif [ "$1" == "up" ] || [ "$1" == "start" ]; then
-  docker-compose up -d
+  atlas_start "$2" "$3" "$4" "$5"
 elif [ "$1" == "down" ] || [ "$1" == "stop" ]; then
   docker-compose down --remove-orphans
 elif [ "$1" == "exec" ] || [ "$1" == "x" ]; then
