@@ -1,12 +1,16 @@
 FROM php:8.2-apache
 
-RUN docker-php-ext-install mysqli pdo pdo_mysql zip
+RUN apt-get update \
+    && apt-get install -y git curl wget libpng-dev libonig-dev libxml2-dev libzip-dev zip unzip
 
-RUN pecl install xdebug \
-    docker-php-ext-enable xdebug
+RUN docker-php-ext-install pdo pdo_mysql mysqli exif gd zip
 
-RUN a2enmod ssl rewrite
+RUN wget -O- https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN /etc/init.d/apache2 restart
+RUN docker-php-ext-install mysqli pdo pdo_mysql zip \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
+RUN a2enmod ssl rewrite && /etc/init.d/apache2 restart
 
 EXPOSE 80

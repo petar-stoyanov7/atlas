@@ -23,7 +23,8 @@ function atlas_help() {
   echo -e "${green}init${no} - Initializes the project, creating an alias for the script"
   echo -e "${green}start (up)${no} - Starts the containers"
   echo -e "${red}stop (down)${no} - Stops the containers"
-  echo -e "${yellow}exec [web|mysql]${no} - SSH to a container"
+  echo -e "${yellow}exec(x)${no} [web|mysql] [command] - execute command on a container"
+  echo -e "${yellow}connect(c)${no} [web|mysql] [command] - execute command on a container"
 }
 
 function atlas_init() {
@@ -45,21 +46,26 @@ function atlas_start() {
   fi
 }
 
-function atlas_exec() {
+function get_container() {
   if [ "$1" == "mysql" ]; then
     container_name=$(grep "MYSQL_NAME" $script_dir/.env |cut -d'=' -f2)
-  elif [ "$1" == "mysql" ]; then
-    container_name=$(grep "WEB_NAME" $script_dir/.env |cut -d'=' -f2)
-  else
+  elif [ "$1" == "web" ]; then
     container_name=$(grep "WEB_NAME" $script_dir/.env |cut -d'=' -f2)
   fi
-  container_id=$(docker ps |grep $container_name |cut -d' ' -f1)
 
-  if [ -n "$2" ]; then
-    docker exec -it "$container_id" "$2"
-  else
-    docker exec -it "$container_id" /bin/bash
-  fi
+  docker ps |grep $container_name |cut -d' ' -f1
+}
+
+function atlas_connect() {
+  container_id=$(get_container "$1")
+
+  docker exec -it "$container_id" /bin/bash
+}
+
+function atlas_exec() {
+  container_id=$(get_container "$1")
+
+  docker exec -it "$container_id" "$2"
 }
 
 if [ "$1" == "init" ]; then
@@ -68,6 +74,8 @@ elif [ "$1" == "up" ] || [ "$1" == "start" ]; then
   atlas_start "$2" "$3" "$4" "$5"
 elif [ "$1" == "down" ] || [ "$1" == "stop" ]; then
   docker-compose down --remove-orphans
+elif [ "$1" == "connect" ] || [ "$1" == "c" ]; then
+  atlas_connect "$2" "$3" "$4" "$5"
 elif [ "$1" == "exec" ] || [ "$1" == "x" ]; then
   atlas_exec "$2" "$3" "$4" "$5"
 else
