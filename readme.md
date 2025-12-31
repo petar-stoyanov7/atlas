@@ -12,6 +12,10 @@ WEB_NAME=web-server
 `docker login`
 4. Start the deployment:\
 `docker-compose up -d`
+5. Optional - you can install a version of npm using nvm:\
+`nvm install 20.17.0`\
+`nvm install v14.17.1`\
+`nvm install v16.4.0`
 
 ## Helper script
 If you want to use the helper script, this is how you can use it:\
