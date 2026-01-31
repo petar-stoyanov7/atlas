@@ -51,6 +51,12 @@ function get_container() {
     container_name=$(grep "MYSQL_NAME" $script_dir/.env |cut -d'=' -f2)
   elif [ "$1" == "web" ]; then
     container_name=$(grep "WEB_NAME" $script_dir/.env |cut -d'=' -f2)
+  elif [ "$1" == "elastic" ]; then
+    container_name=$(grep "ES_NAME" $script_dir/.env |cut -d'=' -f2)
+  elif [ "$1" == "kibana" ]; then
+    container_name=$(grep "KIB_NAME" $script_dir/.env |cut -d'=' -f2)
+  else
+    container_name="$1"
   fi
 
   docker ps |grep $container_name |cut -d' ' -f1
