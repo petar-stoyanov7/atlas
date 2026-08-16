@@ -14,6 +14,10 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql zip \
 RUN a2enmod ssl rewrite && /etc/init.d/apache2 restart
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
-    && . "$HOME/.bashrc"
+    && . "$HOME/.bashrc" \
+    && nvm install v14.17.1 \
+    && nvm install v16.4.0 \
+    && nvm install v20.17.0 \
+    && nvm alias default v20.17.0
 
 EXPOSE 80 443
