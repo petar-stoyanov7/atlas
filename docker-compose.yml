@@ -17,8 +17,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8000:8000"
       - "3000:3000"
+      - "8000:8000"
+      - "8080:8080"
     environment:
       - DOCKER_API_VERSION=1.52
       - PHP_IDE_CONFIG:"serverName=docker"
@@ -47,7 +48,7 @@ services:
       - discovery.type=single-node
       - ELASTIC_USERNAME=${ES_USER}
       - ELASTIC_PASSWORD=${ES_PASS}
-      - xpack.security.enabled=${ES_SECURITY}
+        - xpack.security.enabled=${ES_SECURITY}
   #--- Kibana ---#
   kibana:
     image: docker.elastic.co/kibana/kibana:${ES_STACK_VERSION}
